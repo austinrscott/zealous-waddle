@@ -35,8 +35,17 @@ class Site:
 
 class User:
     def __init__(self):
-        pass
+        self.library = list()
+        self.audience = 0#random number near 400
+        self.popularity = #percent chance audience reacts to thing
+        self.sharer = #percent chance this person will decide to share something they buy
+        self.sense = #percent chance this person recognizes song quality
 
 class Musician(User):
     def __init__(self):
+        super().__init__(self)
+        self.skill = #adds to the quality of tracks
+        self.talent = #a random modifier is added to every track, limited by talent
+        self.frequency = #how many days, on average, before new material is released
+        self.starting_set = #how many songs the Musician has in the beginning of his signup
         pass
