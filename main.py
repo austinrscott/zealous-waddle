@@ -39,15 +39,23 @@ class Site:
 
 class User:
     def __init__(self, upline):
-        self.stats = UserStats()
+        self.stats = StatBlock()
+        if random.random() < 0.15:
+            self.musician = StatBlock()
+        self.library = []
 
-class UserStats():
-    def __init__(self):
-        pass
+class StatBlock():
+    def __init__(self, **kwargs):
+        for kw,arg in kwargs:
+            setattr(self, kw, Stat(*arg))
 
 class Stat():
     def __init__(self, mu, sigma, min, max):
-        pass
+        self.mu = mu
+        self.sigma = sigma
+        self.min = min
+        self.max = max
+        self.variable = mu/
 
 class Song:
     def __init__(self, creator, quality):
@@ -55,3 +63,19 @@ class Song:
         self.quality = quality
 
 site = Site()
+
+# Site
+    # Create a list of musicians who are the starting group
+        # Initialize each user with traits
+            # Audience (number of users reached)
+            # Charisma (like an attribute)
+            # Social Media (like a skill)
+            # Producer-Sense (like an attribute)
+            # Appraisal (like a skill)
+            # Talent (like an attribute)
+            # Musicianship (like a skill)
+            # Starting repertoire
+            # Writing frequency (in days)
+
+    # Begin daily activity loop
+    # Report on daily stats
