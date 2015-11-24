@@ -75,8 +75,9 @@ class User(Person):
         self.library = []
         self.audience = round(nv(400, 100) * (1 + self.charisma))
 
-    def purchase(self, song):
+    def purchase(self, user, song):
         self.library.append(song)
+        sim.initialize_sale(song, user)
 
     def share(self, song):
         pass

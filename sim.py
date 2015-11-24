@@ -1,6 +1,7 @@
 from random import normalvariate as nv
 
 from people import People
+from site import Site
 
 print("IMPORTING SIM".center(80, '-'))
 
@@ -31,15 +32,18 @@ def calc_proximity(entity_a, entity_b):
     return proximity
 
 simulation = Sim()
+site = Site()
 
+# TODO: Make site initialize smoothly
 
 # Classes for the module to interface with outside modules
 
 def add_to_tick(new_actor):
     simulation.add(new_actor)
 
-
 def initialize(num):
+    print('Initializing site...')
+    site = Site()
     print('Initializing simulation with starting group of {} musicians...'.format(num))
     people = People(num)
 
