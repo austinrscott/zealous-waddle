@@ -47,6 +47,21 @@ class Person:
     def show_stats(self):
         return self.stats
 
+    def appraise(self, song):
+        roll = sim.filter_nv(0.5, 0.153) * (1 + self.sense)
+        if roll >= 0.95:
+            return song.quality
+        else:
+            fail_margin = 0.95 - roll
+            return sim.filter_nv(song.quality, fail_margin / 3)
+
+    def like(self, song):
+        proximity = sim.calc_proximity(self, song)
+        if proximity > self.pickiness:
+            return True
+        else:
+            return False
+
 class User(Person):
     '''Users are initiated with a boolean, if the boolean is True then the user is always a musician, otherwise it is a
     random chance.'''
@@ -60,20 +75,11 @@ class User(Person):
         self.library = []
         self.audience = round(nv(400, 100) * (1 + self.charisma))
 
+    def purchase(self, song):
+        self.library.append(song)
+
     def share(self, song):
         pass
-
-    def appraise(self, song):
-        roll = sim.filter_nv(0.5, 0.153) * (1 + self.sense)
-        if roll >= 0.95:
-            return song.quality
-        else:
-            fail_margin = 0.95 - roll
-            return sim.filter_nv(song.quality, fail_margin / 3)
-
-    def like(self, song):
-        proximity = sim.calc_proximity(self, song)
-
 
 class Musician(User):
     def __init__(self):
@@ -105,7 +111,7 @@ class Musician(User):
         maxi = self.intelligence * 0.3
         midpoint = maxi - mini * self.charisma
         musician_quality_mods = triangular(mini, maxi, midpoint)
-        new_song = song.Song(base_quality + musician_quality_mods, self.style)
+        new_song = song.Song(base_quality + musician_quality_mods, self.style, self)
         self.library.append(new_song)
         self.share(new_song)
         self.reset_song_timer()

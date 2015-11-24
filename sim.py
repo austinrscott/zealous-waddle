@@ -40,7 +40,7 @@ def add_to_tick(new_actor):
 
 
 def initialize(num):
-    print('Initializing simulation with starting group of {}...'.format(num))
+    print('Initializing simulation with starting group of {} musicians...'.format(num))
     people = People(num)
 
 
