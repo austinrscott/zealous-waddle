@@ -3,7 +3,6 @@ from random import normalvariate as nv, random, triangular
 import sim
 import song
 
-
 class People:
     '''
     Keeps track of all of the people who exist in a different way than the site does. This tries to make networks
@@ -13,8 +12,7 @@ class People:
     def __init__(self, num_musicians_desired):
         self.people = []
         self.groups = []
-        self.groups.append(PeopleGroup(10, True))
-
+        self.groups.append(PeopleGroup(num_musicians_desired, True))
 
 class Person:
     '''This generates the stats that all users and people groups have.'''
@@ -48,7 +46,6 @@ class Person:
 
     def show_stats(self):
         return self.stats
-
 
 class User(Person):
     '''Users are initiated with a boolean, if the boolean is True then the user is always a musician, otherwise it is a
@@ -113,7 +110,6 @@ class Musician(User):
         self.share(new_song)
         self.reset_song_timer()
 
-
 class PeopleGroup(Person, list):
     '''This is used to simulate small subcultures of people in which similar tastes are shared. This allows for some
     abstraction of groups of people.'''
@@ -137,6 +133,3 @@ class PeopleGroup(Person, list):
     def apply_diversity(self, user):
         for statname, value in user.stats:
             user.stats[statname] = self.stats[statname] + (self.stats[statname] - value) * self.diversity
-
-
-people = People(10)

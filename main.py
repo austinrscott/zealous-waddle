@@ -1,4 +1,5 @@
 import sim
 
+sim.initialize(50)
 sim.simulation.tick()
-print("Finished")
+sim.terminate()
