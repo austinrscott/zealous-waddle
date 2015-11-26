@@ -12,7 +12,6 @@ class People:
     def __init__(self, num_musicians_desired):
         self.people = []
         self.groups = []
-        self.groups.append(PeopleGroup(num_musicians_desired, True))
 
 class Person:
     '''This generates the stats that all users and people groups have.'''
@@ -61,6 +60,9 @@ class Person:
             return True
         else:
             return False
+
+    def decide_purchase(self, song):
+        return self.like(song) and self.appraise(song) > self.pickiness
 
 class User(Person):
     '''Users are initiated with a boolean, if the boolean is True then the user is always a musician, otherwise it is a
