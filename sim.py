@@ -1,11 +1,15 @@
+import math
 from random import normalvariate as nv
 
 from people import People
 from site import Site
 
+# TODO: Comment this file
+
 print("IMPORTING SIM".center(80, '-'))
 
-class Sim:
+
+class Clock:
     '''Clock class keeps time for the simulation, measured in days. When tick() is called, it goes through the list of
     all time-based actors in the simulation and sends them tick() with the current time'''
 
@@ -28,25 +32,23 @@ def filter_nv(mu, sigma):
     return result
 
 def calc_proximity(entity_a, entity_b):
-    proximity = 1 - abs(entity_a.style - entity_b.style)
+    proximity = math.sqrt((entity_a.style[0] - entity_b.style[0]) ^ 2 + (entity_a.style[1] - entity_b.style[1]) ^ 2)
     return proximity
 
-simulation = Sim()
+
+clock = Clock()
 site = Site()
+people = []
 
-# TODO: Make site initialize smoothly
 
-# Classes for the module to interface with outside modules
+# Functions for the module to interface with outside modules
 
 def add_to_tick(new_actor):
-    simulation.add(new_actor)
+    clock.add(new_actor)
 
-def initialize(num):
-    print('Initializing site...')
-    site = Site()
-    print('Initializing simulation with starting group of {} musicians...'.format(num))
-    people = People(num)
 
+def populate(num_people, num_musicians):
+    people = People(num_people, num_musicians)
 
 def terminate():
     print("END OF TEST".center(80, '-'))

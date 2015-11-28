@@ -1,3 +1,5 @@
+# TODO: Comment this file
+
 class Site:
     def __init__(self):
         self.users = {}
@@ -45,13 +47,13 @@ class Site:
         self.figures['previews'] += 1
         self.figures['downloads_mbs'] += 1
 
-    def sale(self, song, promoter, buyer):
-        balance = self.buy_song(song, promoter, buyer)
+    def buy_song(self, song, promoter, buyer):
+        balance = self.exchange(song, promoter, buyer)
         balance -= self.pay_site()
         balance -= self.pay_musician(song.author)
         self.commission_chain(song, promoter, balance)
 
-    def buy_song(self, song, promoter, buyer):
+    def exchange(self, song, promoter, buyer):
         self.users[buyer]['expenses'] += song.cost
         self.users[buyer]['songs'][song] = promoter
         self.figures['sales'] += 1
@@ -80,5 +82,3 @@ class Site:
         else:
             new_balance = self.pay_promoter(promoter, balance)
             self.commission_chain(song, self.users[promoter]['songs'][song], new_balance)
-
-_site = Site()
