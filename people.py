@@ -15,13 +15,23 @@ class People:
     def __init__(self, population_desired, musicians_desired):
         self.groups = []
         while self.population() < population_desired or self.musicians() < musicians_desired:
-            self.groups.append(PeopleGroup(round(triangular(10, 500, 200))))
+            new_ppg = PeopleGroup(round(triangular(10, 500, 200)))
+            self.groups.append(new_ppg)
+            print("New PeopleGroup added, representing {}/{} of all musicians and {}/{} of all users.".format(
+                new_ppg.musicians,
+                self.musicians(),
+                new_ppg.population,
+                self.population()))
+            # TODO: Create friendships between every single person and the populace.
+            # TODO: Activate the muses of each musician and let the first round of sales occur
+            # TODO: Add a delay in song sharing so that it's not instantaneous?
 
     def population(self):
         return sum([len(x) for x in self.groups])
 
     def all_people(self):
-        return list(*self.groups)
+        # TODO: This function, which is supposed to return a list of all Person objects in each PeopleGroup.
+        return []
 
     def musicians(self):
         return sum([x.musicians for x in self.groups])
@@ -36,12 +46,8 @@ class Person:
         else:
             self.stats = stats
         self.reset_stats()
-        self.tags = {}
         self.audience = round(nv(400, 100) * (1 + self.charisma))
         self.friends = []
-
-    def tag(self, **tags):
-        self.tags.update(tags)
 
     def initialize_stats(self):
         self.stats = self.population_template()
@@ -108,6 +114,7 @@ class Person:
             if not self.account:
                 self.create_account()
             sim.site.buy_song(song, sharer, self)
+            # TODO: The user still purchases even if he has the song
 
     def get_muse(self):
         self.muse = Muse(self)
@@ -116,14 +123,15 @@ class Person:
         self.account = UserAccount(self)
         sim.site.add_user(self.account)
         self.people_group.remove(self)
+        # TODO: Skim over the code and make sure that nothing was left unconnected when I added create_account and get_muse.
 
     def share(self, song):
         pass
 
-
 class UserAccount:
     def __init__(self, person):
         self.acct_holder = person
+        self.acct_balance = 0
         self.library = []
 
     def purchase(self, user, song):
@@ -181,11 +189,16 @@ class PeopleGroup(Person, list):
     '''This is used to simulate small subcultures of people in which similar tastes are shared. This allows for some
     abstraction of groups of people.'''
 
-    def __init__(self, population):
+    def __init__(self, population, stats=None):
         super(list, self).__init__()
-
-        super(Person, self).__init__()
+        if stats == None:
+            self.initialize_stats()
+        else:
+            self.stats = stats
+        super(Person, self).__init__(self.stats)
+        self.reset_stats()
         # Statista.com says that 18.08% of people played an instrument. I'd say that maybe a sixth of them make tracks
+        self.population = population
         self.musicians = round(population * 0.03)
         self.listeners = population - self.musicians
         self.diversity = triangular(0.1, 0.9, 0.25)
@@ -194,14 +207,15 @@ class PeopleGroup(Person, list):
             self.apply_diversity(person)
             person.reset_stats()
             person.set_people_group(self)
-        for musician in sample(self, self.musicians):
+        for musician in sample(people, self.musicians):
             musician.get_muse()
+        self.extend(people)
 
     def apply_diversity(self, user):
         for statname, value in user.stats.items():
-            user.stats[statname] = self.stats[statname] + (self.stats[statname] - value) * self.diversity
-
-    def tag(self, *targets, **tags):
-        for target in targets:
-            print("Trying to tag " + repr(target))
-            target.tag(**tags)
+            if type(value) is tuple:
+                user.stats[statname] = (self.stats[statname][0] + (self.stats[statname][0] - value[0]) * self.diversity,
+                                        self.stats[statname][1] + (
+                                        self.stats[statname][1] - value[1]) * self.diversity,)
+            else:
+                user.stats[statname] = self.stats[statname] + (self.stats[statname] - value) * self.diversity

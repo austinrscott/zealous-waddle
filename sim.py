@@ -8,7 +8,6 @@ from site import Site
 
 print("IMPORTING SIM".center(80, '-'))
 
-
 class Clock:
     '''Clock class keeps time for the simulation, measured in days. When tick() is called, it goes through the list of
     all time-based actors in the simulation and sends them tick() with the current time'''
@@ -38,16 +37,14 @@ def calc_proximity(entity_a, entity_b):
 
 clock = Clock()
 site = Site()
-people = []
-
 
 # Functions for the module to interface with outside modules
 
 def add_to_tick(new_actor):
     clock.add(new_actor)
 
-
 def populate(num_people, num_musicians):
+    global people
     people = People(num_people, num_musicians)
 
 def terminate():
