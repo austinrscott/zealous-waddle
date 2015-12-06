@@ -1,5 +1,5 @@
 import sim
 
-sim.populate(2500, 500)
+sim.populate(25000, 50)
 sim.clock.tick()
 sim.terminate()

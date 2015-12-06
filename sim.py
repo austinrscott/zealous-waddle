@@ -31,7 +31,7 @@ def filter_nv(mu, sigma):
     return result
 
 def calc_proximity(entity_a, entity_b):
-    proximity = math.sqrt((entity_a.style[0] - entity_b.style[0]) ^ 2 + (entity_a.style[1] - entity_b.style[1]) ^ 2)
+    proximity = math.sqrt((entity_a.style[0] - entity_b.style[0]) ** 2 + (entity_a.style[1] - entity_b.style[1]) ** 2)
     return proximity
 
 

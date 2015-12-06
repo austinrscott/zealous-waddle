@@ -1,4 +1,4 @@
-from random import normalvariate as nv, random, triangular, sample
+from random import normalvariate as nv, random, triangular, sample, shuffle
 
 import sim
 import song
@@ -14,24 +14,40 @@ class People:
 
     def __init__(self, population_desired, musicians_desired):
         self.groups = []
+        self.all_people = []
         while self.population() < population_desired or self.musicians() < musicians_desired:
             new_ppg = PeopleGroup(round(triangular(10, 500, 200)))
             self.groups.append(new_ppg)
+            self.all_people.extend(new_ppg.people)
             print("New PeopleGroup added, representing {}/{} of all musicians and {}/{} of all users.".format(
                 new_ppg.musicians,
                 self.musicians(),
                 new_ppg.population,
                 self.population()))
-            # TODO: Create friendships between every single person and the populace.
-            # TODO: Activate the muses of each musician and let the first round of sales occur
-            # TODO: Add a delay in song sharing so that it's not instantaneous?
+        print("Calculating friend lists... 0%")
+        progress_counter = 0
+        num_errors = 0
+        for person in self.all_people:
+            list_of_friends_to_try = list(self.all_people)
+            shuffle(list_of_friends_to_try)
+            while not person.at_max_friends():
+                try:
+                    stranger = list_of_friends_to_try.pop()
+                    if person.friendly(stranger) and not stranger in person.friends: person.add_friend(stranger)
+                except IndexError:
+                    num_errors += 1
+                    print("WARNING: Errors = {} Loops = {}".format(num_errors, progress_counter))
+                    break
+            progress_counter += 1
+            if progress_counter % 50 == 0:
+                percent_complete = round(progress_counter / len(self.all_people) * 100)
+                print("                        ... {}%".format(percent_complete))
+        print("                        ... 100%!")
+        # TODO: Activate the muses of each musician and let the first round of sales occur
+        # TODO: Add a delay in song sharing so that it's not instantaneous?
 
     def population(self):
-        return sum([len(x) for x in self.groups])
-
-    def all_people(self):
-        # TODO: This function, which is supposed to return a list of all Person objects in each PeopleGroup.
-        return []
+        return sum([x.population for x in self.groups])
 
     def musicians(self):
         return sum([x.musicians for x in self.groups])
@@ -183,31 +199,30 @@ class Muse:
         self.person.share(new_song)
         self.reset_song_timer()
 
-class PeopleGroup(Person, list):
+
+class PeopleGroup(Person):
     '''This is used to simulate small subcultures of people in which similar tastes are shared. This allows for some
     abstraction of groups of people.'''
 
     def __init__(self, population, stats=None):
-        super(list, self).__init__()
         if stats == None:
             self.initialize_stats()
         else:
             self.stats = stats
-        super(Person, self).__init__(self.stats)
+        super().__init__(self.stats)
         self.reset_stats()
         # Statista.com says that 18.08% of people played an instrument. I'd say that maybe a sixth of them make tracks
         self.population = population
         self.musicians = round(population * 0.03)
         self.listeners = population - self.musicians
         self.diversity = triangular(0.1, 0.9, 0.25)
-        people = [Person() for x in range(population)]
-        for person in people:
+        self.people = [Person() for x in range(population)]
+        for person in self.people:
             self.apply_diversity(person)
             person.reset_stats()
             person.set_people_group(self)
-        for musician in sample(people, self.musicians):
+        for musician in sample(self.people, self.musicians):
             musician.get_muse()
-        self.extend(people)
 
     def apply_diversity(self, user):
         for statname, value in user.stats.items():
