@@ -110,11 +110,10 @@ class Person:
 
     def decide_purchase(self, song, sharer):
         sim.site.preview_song(song)
-        if self.like(song) and self.appraise(song) > self.pickiness:
+        if self.like(song) and self.appraise(song) > self.pickiness and not (song in self.account.library):
             if not self.account:
                 self.create_account()
-            sim.site.buy_song(song, sharer, self)
-            # TODO: The user still purchases even if he has the song
+            self.account.purchase(song, sharer)
 
     def get_muse(self):
         self.muse = Muse(self)
@@ -122,7 +121,6 @@ class Person:
     def create_account(self):
         self.account = UserAccount(self)
         sim.site.add_user(self.account)
-        self.people_group.remove(self)
         # TODO: Skim over the code and make sure that nothing was left unconnected when I added create_account and get_muse.
 
     def share(self, song):
